@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <link rel="stylesheet" href="https://code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
+  <script src="https://code.jquery.com/jquery-1.12.4.js"></script>
+  <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
+  <link rel="stylesheet" href="{{url_for('static', filename='codemirror/lib/codemirror.css')}}">
+  <script src="{{url_for('static', filename='codemirror/lib/codemirror.js')}}"></script>
+  <script src="{{url_for('static', filename='codemirror/mode/python/python.js')}} "></script>
+</head>
+
+<body>
+Code:
+<div>
+<textarea rows="4" cols="80" id="thecode" class="Python">
+import numpy as np
+a = np.array([1, 2, 3])
+print(a**3)
+</textarea>
+</div>
+
+<p>Stdout: <textarea id="stdout" rows="4" cols="80" id="thecode" ></textarea>
+<p>Stderr: <textarea id="stderr" rows="4" cols="80" id="thecode" ></textarea>
+<p>Traceback: <textarea id="traceback" rows="4" cols="80" id="thecode" ></textarea>
+<p>Code: <textarea id="code" rows="4" cols="80" id="thecode" ></textarea>
+
+<script>
+  var id = document.getElementById('thecode');
+  var editor = CodeMirror.fromTextArea(id, {
+    lineNumbers: true
+  });
+  var keyMap = {
+    "Ctrl-Shift-Enter": function(cm) {
+      $.ajax({
+        method: "POST",
+        contentType: "application/json; charset=utf-8",
+        url: "safe_eval",
+        data: JSON.stringify({code: editor.getValue()})
+      })
+      .done(function( output_values ) {
+        $( "#stdout" ).html(output_values['stdout']);
+        $( "#stderr" ).html(output_values['stderr']);
+        $( "#traceback" ).html(output_values['err_traceback']);
+        $( "#code" ).html(output_values['code']);
+        console.log(JSON.stringify(output_values));
+      })
+      .fail(function( jqXHR, textStatus ) {
+        // Failure... 
+        alert( "Request failed: " + textStatus );
+      });
+    },
+  };
+  editor.addKeyMap(CodeMirror.normalizeKeyMap(keyMap));
+</script>
+</body>
+</html>
