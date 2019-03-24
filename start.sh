@@ -1,6 +1,6 @@
 #!/bin/bash
 
-# Launch environment
+# Launch conda environment
 source activate cog_worker
-# Launch flask main
-python -u flask_main.py
+# Launch the exe
+python -u /run_home/flask_main.py

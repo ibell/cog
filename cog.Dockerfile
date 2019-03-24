@@ -5,17 +5,20 @@ RUN groupadd -g 629 prole && \
 
 RUN mkdir /run_home
 
-ADD cog_environment.yml .
+COPY cog_environment.yml .
 RUN conda env create -f /cog_environment.yml
+RUN rm cog_environment.yml
 
-COPY templates templates
-COPY static static
+COPY templates /run_home/templates
+COPY static /run_home/static
 COPY start.sh .
+COPY flask_main.py /run_home
 
 RUN mkdir /scratch && \
     chown prole /scratch && \
-    chown prole start.sh
-COPY flask_main.py .
+    chown prole start.sh && \
+    chown prole run_home && \
+    chown prole /run_home/flask_main.py
 
 # Switch to our user for the rest
 USER prole
