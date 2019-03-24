@@ -14,8 +14,18 @@ Code:
 <div>
 <textarea rows="4" cols="80" id="thecode" class="Python">
 import numpy as np
+import os
 a = np.array([1, 2, 3])
 print(a**3)
+with open('/scratch/file','w') as fp:
+  fp.write('np')
+with open('/scratch/file') as fp:
+  print(fp.read())
+with open('/flask_main.py') as fp:
+  print(fp.read())
+print(os.environ)
+with open('no', 'w') as fp:
+  fp.write('np')
 </textarea>
 </div>
 
