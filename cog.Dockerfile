@@ -16,31 +16,19 @@ RUN mkdir /run_home
 # Construct the conda environment
 COPY cog_environment.yml .
 RUN conda update -n base -c defaults conda && \
-    conda env create -f /cog_environment.yml
-RUN rm cog_environment.yml
+    conda env update --name base --file /cog_environment.yml && \
+	rm /cog_environment.yml
 
 # Copy files for the flask server
 COPY templates /run_home/templates
 COPY static /run_home/static
-COPY start.sh .
 COPY flask_main.py /run_home
-
-# Copy configuration files for sandboxing the build
-COPY 01-sandbox /etc/sudoers.d/01-sandbox
 
 RUN mkdir /scratch && \
     chown prole /scratch && \
-    chown prole start.sh && \
     chown prole run_home && \
     chown prole /run_home/flask_main.py
 
-# RUN addgroup sandbox && \
-#     adduser --disabled-login sandbox --ingroup sandbox
-
-# All this happens in the HOST, must be linux host
-# Do: sudo apparmor_parser apparmor.config
-
 # Switch to our user for the rest
 USER prole
-RUN chmod +x start.sh
-CMD ["./start.sh"]
+CMD ["python","-u","/run_home/flask_main.py"]
