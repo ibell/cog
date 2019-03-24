@@ -1,0 +1,3 @@
+prole ALL=(sandbox) SETENV:NOPASSWD:/miniconda3/envs/cog_worker/bin/python
+prole ALL=(sandbox) SETENV:NOPASSWD:/usr/bin/find
+prole ALL=(ALL) NOPASSWD:/usr/bin/pkill
